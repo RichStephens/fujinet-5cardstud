@@ -6,8 +6,8 @@
 #include <cmoc.h>
 #include <coco.h>
 #include "hires.h"
-#include "../fujinet-fuji.h"
-#include "../fujinet-network.h"
+#include <fujinet-fuji.h>
+#include <fujinet-network.h>
 
 
 #define FUJI_HOST_SLOT_COUNT 8

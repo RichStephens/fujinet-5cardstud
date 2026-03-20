@@ -8,8 +8,8 @@
 #include <cmoc.h>
 #include <coco.h>
 #include "../platform-specific/appkey.h"
-#include "../fujinet-fuji.h"
-#include "../fujinet-network.h"
+#include <fujinet-fuji.h>
+#include <fujinet-network.h>
 #include "../misc.h"
 
 // A temp version that does not add 256 bytes to the stack

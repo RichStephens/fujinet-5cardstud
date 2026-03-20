@@ -6,7 +6,7 @@
  */
 
 #include <coco.h>
-#include "../fujinet-fuji.h"
+#include <fujinet-fuji.h>
 
 
 
