@@ -1,6 +1,7 @@
 PRODUCT = fcs
 #PLATFORMS = coco apple2 atari c64 adam msdos msxrom adam_cpm
-PLATFORMS = msdos apple2
+#TODO FIX adam
+PLATFORMS = msdos apple2 c64
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.

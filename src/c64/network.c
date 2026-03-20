@@ -10,8 +10,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "../platform-specific/appkey.h"
-#include "../fujinet-fuji.h"
-#include "../fujinet-network.h"
+#include <fujinet-fuji.h>
+#include <fujinet-network.h>
 #include "../misc.h"
 
 #define LFN 2     // The logical file number to use for I/O
