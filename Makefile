@@ -1,9 +1,9 @@
 PRODUCT = fcs
 #TODO FIX adam
 #plus4 also works, but needs fujinet-lib
-PLATFORMS = msdos apple2 c64 coco
+#PLATFORMS = msdos apple2 c64 coco
 #MSX ROM still in development
-#PLATFORMS = msxrom
+PLATFORMS = msxrom
 
 # You can run 'make <platform>' to build for a specific platform,
 # or 'make <platform>/<target>' for a platform-specific target.
@@ -22,9 +22,9 @@ SRC_DIRS = src src/%PLATFORM%
 # - a URL to a git repo
 # - empty which will use whatever is the latest
 # - undefined, no fujinet-lib will be used
-FUJINET_LIB = 
+#FUJINET_LIB =
 #MSX currently needs
-#FUJINET_LIB = https://github.com/FozzTexx/fujinet-lib-experimental.git
+FUJINET_LIB = https://github.com/FozzTexx/fujinet-lib-experimental.git
 
 # Define extra dirs ("combos") that expand with a platform.
 # Format: platform+=combo1,combo2
@@ -38,6 +38,7 @@ PLATFORM_COMBOS = \
 CFLAGS_EXTRA_MSDOS = -q -otexan
 
 CFLAGS_EXTRA_MSXROM = -DBUILD_MSX
+LDFLAGS_EXTRA_MSXROM += --generic-console -pragma-redirect:CRT_FONT=_font -create-app
 
 LDFLAGS_EXTRA_APPLE2 = -C src/apple2/apple2-hgr.cfg
 
