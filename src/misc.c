@@ -6,6 +6,10 @@
 //#define USE_PLATFORM_SPECIFIC_INPUT 1
 //#endif
 
+#ifdef BUILD_MSX
+#include "msx/joystick.h"
+#endif
+
 #ifdef _CMOC_VERSION_
 #include "coco/joystick.h"
 #else
