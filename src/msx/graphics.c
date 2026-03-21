@@ -34,6 +34,9 @@ void initGraphics()
 
 void drawChip(unsigned char x, unsigned char y)
 {
+    vdp_color(VDP_INK_DARK_RED,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+    gotoxy(x,y);
+    cputc(0xBC);
 }
 
 void drawBuffer()
@@ -100,9 +103,12 @@ void drawBox(unsigned char x, unsigned char y, unsigned char w, unsigned char h)
 void drawText(unsigned char x, unsigned char y, const char* s)
 {
     // Ridiculously naive.
-    vdp_color(VDP_INK_BLACK,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+    if (y>19)
+        vdp_color(VDP_INK_WHITE,VDP_INK_BLACK,VDP_INK_LIGHT_GREEN);
+    else
+        vdp_color(VDP_INK_BLACK,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
     gotoxy(x,y);
-    puts(s);
+    cputs(strupr(s));
 }
 
 /**
@@ -121,14 +127,17 @@ void drawLogo()
 
 void clearStatusBar()
 {
+    vdp_vfill(0x1600,0x00,0x200);
+    vdp_vfill(MODE2_ATTR+0x1600,0xF1,0x200);
 }
 
+/**
+ * @brief Clear the screen
+ */
 void resetScreen()
 {
-}
-
-void hideLine(unsigned char x, unsigned char y, unsigned char w)
-{
+    vdp_color(VDP_INK_BLACK,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+    clrscr();
 }
 
 void disableDoubleBuffer()
@@ -149,13 +158,51 @@ void enableDoubleBuffer()
  */
 void drawCard(unsigned char x, unsigned char y, unsigned char partial, const char* s, unsigned char isHidden)
 {
-    static unsigned char val, suitColor, i, suit,rightDigit;
+    static unsigned char val, suitColor, i, suit,rightDigit, peekChar, peekChar2;
 
     if (partial == PARTIAL_LEFT)
     {
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+        cputs("\x80");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\x9E");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\xA0");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\xA2");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+        cputs("\x81");
     }
     else if (partial == PARTIAL_RIGHT)
     {
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+        cputs("\x80");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\x9D");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\x9C");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+        cputs("\xA2");
+
+        gotoxy(x,y++);
+        vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+        cputs("\x81");
     }
     else // FULL CARD
     {
@@ -186,10 +233,34 @@ void drawCard(unsigned char x, unsigned char y, unsigned char partial, const cha
         // If card is overturned, draw the back
         if (s[0]=='?')
         {
+            /* gotoxy(x,y++); */
+            /* vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN); */
+            /* cputs("\x80\x82\x97"); */
+
+            /* gotoxy(x,y++); */
+            /* vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN); */
+            /* cputs("\x9E\x9f"); */
+            /* vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN); */
+            /* cputc(0x86); */
+
+            /* gotoxy(x,y++); */
+            /* vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN); */
+            /* cputs("\xA0\xA1"); */
+            /* vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN); */
+            /* cputc(0x86); */
+
+            /* gotoxy(x,y++); */
         }
         else // Draw the full card.
         {
+            unsigned char cardBkg=0;
+
             gotoxy(x,y++);
+
+            if (isHidden)
+                cardBkg = VDP_INK_GRAY;
+            else
+                cardBkg = VDP_INK_WHITE;
 
             // Top card border
             vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
@@ -219,30 +290,62 @@ void drawCard(unsigned char x, unsigned char y, unsigned char partial, const cha
             }
 
             gotoxy(x,y++);
-            vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(0x86);
-            vdp_color(suitColor,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(suitColor,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(val);
-            vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
-            cputc(0x86);
+            peekChar = cvpeek(x+3,y-1);
+            peekChar2 = cvpeek(x+2,y-1);
+            if (peekChar == ' ')
+            {
+                vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+                cputc(0x86);
+            }
+            else
+            {
+                vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
+                cputc(peekChar2);
+            }
 
             // left border and empty space
             gotoxy(x,y++);
-            vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(0x86);
-            vdp_color(suitColor,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(suitColor,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(0x20);
             vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
-            cputc(0x86);
+            peekChar = cvpeek(x+3,y-1);
+            peekChar2 = cvpeek(x+2,y-1);
+            if (peekChar == ' ')
+            {
+                vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+                cputc(0x86);
+            }
+            else
+            {
+                vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
+                cputc(peekChar2);
+            }
 
             // left border and suit
             gotoxy(x,y++);
-            vdp_color(VDP_INK_DARK_BLUE,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(0x86);
-            vdp_color(suitColor,VDP_INK_WHITE,VDP_INK_LIGHT_GREEN);
+            vdp_color(suitColor,cardBkg,VDP_INK_LIGHT_GREEN);
             cputc(suit);
             vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
-            cputc(0x86);
+            peekChar = cvpeek(x+3,y-1);
+            peekChar2= cvpeek(x+2,y-1);
+            if (peekChar == ' ')
+            {
+                vdp_color(VDP_INK_DARK_BLUE,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+                cputc(0x86);
+            }
+            else
+            {
+                vdp_color(VDP_INK_DARK_BLUE,cardBkg,VDP_INK_LIGHT_GREEN);
+                cputc(peekChar2);
+            }
 
             // bottom border
             gotoxy(x,y++);
@@ -255,10 +358,16 @@ void drawCard(unsigned char x, unsigned char y, unsigned char partial, const cha
 
 void drawStatusText(const char* s)
 {
+    vdp_color(VDP_INK_WHITE,VDP_INK_BLACK,VDP_INK_LIGHT_GREEN);
+    gotoxy(0,22);
+    cputs(s);
 }
 
 void drawStatusTextAt(unsigned char x, const char* s)
 {
+    vdp_color(VDP_INK_WHITE,VDP_INK_BLACK,VDP_INK_LIGHT_GREEN);
+    gotoxy(x,22);
+    cputs(s);
 }
 
 unsigned char cycleNextColor()
@@ -269,8 +378,32 @@ void drawStatusTimer()
 {
 }
 
+void hideLine(unsigned char x, unsigned char y, unsigned char w)
+{
+    if (y>21)
+        vdp_color(VDP_INK_DARK_RED,VDP_INK_BLACK,VDP_INK_LIGHT_GREEN);
+    else
+        vdp_color(VDP_INK_DARK_RED,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+
+    for (unsigned char i=0; i<w; i++)
+    {
+        gotoxy(x+i,y);
+        cputc(0x20);
+    }
+}
+
 void drawLine(unsigned char x, unsigned char y, unsigned char w)
 {
+    if (y>21)
+        vdp_color(VDP_INK_DARK_RED,VDP_INK_BLACK,VDP_INK_LIGHT_GREEN);
+    else
+        vdp_color(VDP_INK_DARK_RED,VDP_INK_LIGHT_GREEN,VDP_INK_LIGHT_GREEN);
+
+    for (unsigned char i=0; i<w; i++)
+    {
+        gotoxy(x+i,y);
+        cputc(0xA6);
+    }
 }
 
 void setColorMode(unsigned char mode)

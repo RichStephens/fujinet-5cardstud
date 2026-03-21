@@ -10,23 +10,25 @@
 
 #define SINGLE_BUFFER 1
 
+#define POT_Y_MODIFIER 0
+
 /**
  * Platform specific key map for common input
  */
 
-#define KEY_LEFT_ARROW      0xa3
+#define KEY_LEFT_ARROW      0x1D
 #define KEY_LEFT_ARROW_2    0x9D
 #define KEY_LEFT_ARROW_3    0x2C // ,
 
-#define KEY_RIGHT_ARROW     0xa1
+#define KEY_RIGHT_ARROW     0x1C
 #define KEY_RIGHT_ARROW_2   0x1D
 #define KEY_RIGHT_ARROW_3   0x2E // .
 
-#define KEY_UP_ARROW        0xa0
+#define KEY_UP_ARROW        0x1E
 #define KEY_UP_ARROW_2      0x91
 #define KEY_UP_ARROW_3      0x2D // -
 
-#define KEY_DOWN_ARROW      0xa2
+#define KEY_DOWN_ARROW      0x1F
 #define KEY_DOWN_ARROW_2    0x11
 #define KEY_DOWN_ARROW_3    0x3D // =
 
